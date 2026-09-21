@@ -224,11 +224,14 @@ svg { width: 1.25rem; height: 1.25rem; display: block; }
   .brand.compact { gap: 8px; }
   .brand.compact .brand-mark { width: 34px; height: 34px; border-radius: 11px 11px 11px 4px; }
   #app-main { padding: 22px 18px calc(96px + env(safe-area-inset-bottom)); }
-  .bottom-nav { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); z-index: 30; width: 100%; height: calc(68px + env(safe-area-inset-bottom)); padding: 7px 8px env(safe-area-inset-bottom); border-top: 1px solid var(--line); background: rgba(255,255,255,.96); backdrop-filter: blur(16px); display: grid; grid-template-columns: repeat(4,1fr); }
+  .bottom-nav { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); z-index: 30; width: 100%; height: calc(72px + env(safe-area-inset-bottom)); padding: 7px 5px env(safe-area-inset-bottom); border-top: 1px solid var(--line); background: rgba(255,255,255,.96); backdrop-filter: blur(16px); display: grid; grid-template-columns: repeat(5,1fr); }
   .bottom-nav .nav-button { min-height: 54px; padding: 4px; border-radius: 11px; display: flex; flex-direction: column; justify-content: center; gap: 3px; font-size: .68rem; }
   .bottom-nav .nav-button svg { width: 1.2rem; height: 1.2rem; }
   .bottom-nav .nav-badge { position: absolute; margin: 0; top: 3px; left: calc(50% + 6px); min-width: 17px; height: 17px; font-size: .58rem; }
   .bottom-nav .nav-button { position: relative; }
+  .bottom-nav .record-nav { color: var(--primary); overflow: visible; }
+  .bottom-nav .record-nav svg { width: 1.35rem; height: 1.35rem; padding: 9px; box-sizing: content-box; margin-top: -22px; border-radius: 50%; background: var(--primary); color: white; border: 5px solid white; box-shadow: 0 7px 18px rgba(103,87,232,.3); }
+  .bottom-nav .record-nav span { margin-top: -3px; }
   .dashboard-grid, .record-layout, .detail-grid { grid-template-columns: 1fr; }
   .task-groups, .family-grid { grid-template-columns: 1fr; }
   .page-heading { align-items: flex-start; }

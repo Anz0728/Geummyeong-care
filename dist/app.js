@@ -26,6 +26,7 @@ const icon = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColo
 const navItems = [
   { id: 'home', label: '홈', icon: 'home' },
   { id: 'records', label: '진료 기록', icon: 'files' },
+  { id: 'parent', label: '진료 녹음', icon: 'mic', featured: true },
   { id: 'tasks', label: '챙길 일', icon: 'check', badge: '2' },
   { id: 'family', label: '가족', icon: 'users' }
 ];
@@ -51,7 +52,7 @@ function bindStaticIcons() {
 
 function renderNav() {
   const current = ['detail', 'summary'].includes(state.page) ? 'records' : state.page;
-  const markup = navItems.map(item => `<button class="nav-button" data-page="${item.id}" ${current === item.id ? 'aria-current="page"' : ''}>${icon(item.icon)}<span>${item.label}</span>${item.badge ? `<span class="nav-badge">${state.tasks.filter(t => !t.done).length}</span>` : ''}</button>`).join('');
+  const markup = navItems.map(item => `<button class="nav-button ${item.featured ? 'record-nav' : ''}" data-page="${item.id}" ${current === item.id ? 'aria-current="page"' : ''}>${icon(item.icon)}<span>${item.label}</span>${item.badge ? `<span class="nav-badge">${state.tasks.filter(t => !t.done).length}</span>` : ''}</button>`).join('');
   document.querySelector('.side-nav').innerHTML = `${markup}<button class="nav-button" data-page="agent" ${current === 'agent' ? 'aria-current="page"' : ''}>${icon('sparkles')}<span>금명이에게 묻기</span></button>`;
   document.querySelector('.bottom-nav').innerHTML = markup;
 }
