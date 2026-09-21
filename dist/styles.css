@@ -113,10 +113,11 @@ svg { width: 1.25rem; height: 1.25rem; display: block; }
 .today-item.done .check-button { border-color: var(--primary); background: var(--primary); color: white; }
 .today-item.done strong { color: var(--muted); text-decoration: line-through; }
 .quick-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.quick-button { min-height: 94px; padding: 15px; border: 1px solid var(--line); border-radius: 16px; background: white; text-align: left; cursor: pointer; display: grid; align-content: space-between; }
+.quick-button { min-height: 106px; padding: 15px; border: 1px solid var(--line); border-radius: 16px; background: white; text-align: left; cursor: pointer; display: grid; align-content: space-between; }
 .quick-button:hover { border-color: #c9c3fa; background: var(--primary-pale); }
 .quick-button span:first-child { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; color: var(--primary); background: var(--primary-soft); }
 .quick-button strong { font-size: .82rem; }
+.quick-button small { margin-top: 2px; display: block; color: var(--muted); font-size: .65rem; }
 .health-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
 .stat { padding: 13px 10px; border-radius: 14px; background: #fafafe; }
 .stat span { color: var(--muted); font-size: .68rem; }
@@ -126,6 +127,14 @@ svg { width: 1.25rem; height: 1.25rem; display: block; }
 .briefing .item-icon { width: 36px; height: 36px; flex: 0 0 auto; background: white; color: var(--green); }
 .briefing strong { font-size: .83rem; }
 .briefing p { margin-top: 4px; color: #487160; font-size: .73rem; }
+.weekly-card { overflow: hidden; }
+.briefing-visual { min-height: 148px; margin: 0 -4px 14px; padding: 22px; border-radius: 17px; display: flex; align-items: flex-end; gap: 14px; overflow: hidden; position: relative; color: white; background: linear-gradient(135deg,#2b584d,#77a88b); }
+.briefing-visual::after { content: ""; position: absolute; width: 170px; height: 170px; right: -48px; top: -70px; border-radius: 50%; border: 28px solid rgba(255,255,255,.1); }
+.briefing-visual > span { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; flex: 0 0 auto; background: rgba(255,255,255,.18); }
+.briefing-visual > div { position: relative; z-index: 1; }
+.briefing-visual small { color: #dff2e7; font-size: .68rem; font-weight: 700; }
+.briefing-visual strong { margin-top: 3px; display: block; font-size: 1.05rem; line-height: 1.35; }
+.weekly-copy { margin-bottom: 8px; color: var(--muted); font-size: .72rem; }
 
 .record-layout { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(290px,.75fr); gap: 18px; }
 .timeline { display: grid; gap: 14px; }
@@ -319,12 +328,46 @@ svg { width: 1.25rem; height: 1.25rem; display: block; }
 .lab-row > div:nth-child(2), .med-row > div:nth-child(2) { min-width: 0; flex: 1; }
 .lab-row strong, .med-row strong { display: block; font-size: .82rem; }
 .lab-row p, .med-row p { color: var(--muted); font-size: .69rem; }
+.medication-panel .card-header > div p, .vaccine-panel .card-header > div p { margin-top: 2px; color: var(--muted); font-size: .68rem; }
+.med-progress { padding: 13px; border-radius: 14px; background: var(--primary-pale); display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.med-progress span { color: var(--muted); font-size: .7rem; }
+.med-progress strong { font-size: .72rem; color: var(--primary-dark); }
+.med-progress > div { grid-column: 1 / -1; height: 7px; border-radius: 999px; overflow: hidden; background: #dcd8ff; }
+.med-progress i { display: block; height: 100%; border-radius: inherit; background: var(--primary); }
+.medication-list { margin-top: 8px; }
+.medication-item { padding: 14px 0; display: grid; grid-template-columns: 42px 1fr 32px; gap: 11px; align-items: center; }
+.medication-item + .medication-item { border-top: 1px solid var(--line); }
+.medication-item > div > div { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.medication-item strong { font-size: .82rem; }
+.medication-item p { margin-top: 2px; color: var(--muted); font-size: .69rem; }
+.medication-item small { display: block; margin-top: 5px; color: var(--orange); font-size: .65rem; }
+.medication-item.done small { color: var(--green); }
+.med-check { width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 10px; display: grid; place-items: center; background: white; color: #a8abb4; cursor: pointer; }
+.med-check.checked { border-color: var(--green); background: var(--green); color: white; }
+.med-check svg { width: 1rem; height: 1rem; }
+.vaccine-timeline { position: relative; display: grid; gap: 0; }
+.vaccine-timeline::before { content: ""; position: absolute; left: 16px; top: 20px; bottom: 20px; width: 2px; background: var(--line); }
+.vaccine-timeline > div { padding: 10px 0; display: grid; grid-template-columns: 34px 1fr; gap: 11px; position: relative; }
+.vaccine-timeline i { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary); z-index: 1; }
+.vaccine-timeline .complete i { background: var(--green-soft); color: var(--green); }
+.vaccine-timeline i svg { width: 1rem; height: 1rem; }
+.vaccine-timeline strong { margin: 5px 0 1px; display: block; font-size: .8rem; }
+.vaccine-timeline p { color: var(--muted); font-size: .67rem; }
 .health-two { display: grid; grid-template-columns: repeat(2,1fr); gap: 18px; }
 .allergy-card { padding: 13px; border-radius: 13px; background: var(--red-soft); color: #9f3741; }
 .allergy-card + .allergy-card { margin-top: 9px; }
 .allergy-card.neutral { background: var(--orange-soft); color: #825122; }
 .allergy-card strong { font-size: .78rem; }
 .allergy-card p { margin-top: 2px; font-size: .68rem; }
+.allergy-link { margin-top: 12px; }
+.data-export-card { padding: 20px; display: grid; grid-template-columns: 54px 1fr auto; gap: 16px; align-items: center; background: linear-gradient(135deg,#f5f3ff,#fff); }
+.export-icon { width: 54px; height: 54px; border-radius: 17px; display: grid; place-items: center; background: var(--primary); color: white; }
+.data-export-card h3 { font-size: .94rem; }
+.data-export-card p { margin: 3px 0 13px; color: var(--muted); font-size: .7rem; }
+.data-export-card > div > div { display: flex; gap: 8px; flex-wrap: wrap; }
+.data-export-card .button { min-height: 38px; font-size: .72rem; }
+.secure-note { display: flex; align-items: center; gap: 5px; color: var(--green); font-size: .66rem; font-weight: 700; white-space: nowrap; }
+.secure-note svg { width: 1rem; height: 1rem; }
 .record-summary { min-height: 82px; padding: 15px 17px; display: flex; align-items: center; gap: 12px; }
 .record-summary > div:nth-child(2) { min-width: 0; flex: 1; }
 .record-summary strong { display: block; font-size: .84rem; }
@@ -387,12 +430,18 @@ svg { width: 1.25rem; height: 1.25rem; display: block; }
   .doctor-card { grid-template-columns: 46px 1fr; }
   .doctor-card .button { grid-column: 1 / -1; width: 100%; }
   .metric-grid { gap: 7px; }
-  .metric-card { min-height: 136px; padding: 12px 9px; }
+  .metric-card { min-height: 164px; padding: 12px 9px 42px; }
   .metric-card strong { font-size: 1.08rem; }
   .metric-card p { font-size: .6rem; }
-  .metric-trend { position: static; width: max-content; margin-top: 7px; }
-  .sparkline { left: 8px; right: 8px; width: calc(100% - 16px); height: 32px; }
-  .goal-bar { left: 10px; right: 10px; bottom: 22px; }
+  .metric-trend { position: static; width: max-content; max-width: 100%; margin-top: 8px; padding: 3px 5px; font-size: .58rem !important; }
+  .metric-trend svg { width: .7rem; height: .7rem; }
+  .sparkline { left: 8px; right: 8px; bottom: 9px; width: calc(100% - 16px); height: 27px; }
+  .goal-bar { left: 10px; right: 10px; bottom: 18px; }
+  .data-export-card { grid-template-columns: 46px 1fr; padding: 17px; }
+  .export-icon { width: 46px; height: 46px; }
+  .secure-note { grid-column: 2; }
+  .data-export-card .button { width: 100%; }
+  .medication-item { grid-template-columns: 38px 1fr 30px; }
   .care-thread { min-height: calc(100vh - 210px); }
   .care-message { max-width: 88%; }
   .record-summary { align-items: flex-start; flex-wrap: wrap; }

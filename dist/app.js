@@ -107,9 +107,11 @@ function homePage() {
           <div class="today-list">${state.tasks.slice(0,2).map(taskItem).join('')}</div>
         </article>
 
-        <article class="card card-pad">
+        <article class="card card-pad weekly-card">
           <div class="card-header"><h3>이번 주 건강 브리핑</h3><span class="badge green">안정적</span></div>
-          <div class="briefing"><span class="item-icon">${icon('trend')}</span><div><strong>혈압이 지난주보다 안정적으로 유지됐어요</strong><p>아침 평균 128/78mmHg · 7일 중 6일 기록 완료</p></div></div>
+          <div class="briefing-visual"><span>${icon('heart')}</span><div><small>금명이 케어 가이드</small><strong>환절기 면역력 관리를 위한<br>3가지 생활 수칙</strong></div></div>
+          <p class="weekly-copy">일교차가 커지는 시기에는 수분 섭취와 가벼운 실내 운동, 규칙적인 복약 시간이 중요해요.</p>
+          <button class="text-link" data-action="briefing">건강 브리핑 읽기 →</button>
         </article>
       </div>
 
@@ -117,10 +119,10 @@ function homePage() {
         <article class="card card-pad">
           <div class="card-header"><h3>빠른 케어 메뉴</h3></div>
           <div class="quick-grid">
-            <button class="quick-button" data-page="appointments"><span>${icon('calendar')}</span><strong>진료 예약</strong></button>
-            <button class="quick-button" data-page="parent"><span>${icon('mic')}</span><strong>진료 녹음</strong></button>
-            <button class="quick-button" data-page="team"><span>${icon('message')}</span><strong>케어팀 문의</strong></button>
-            <button class="quick-button" data-page="health"><span>${icon('activity')}</span><strong>건강 기록</strong></button>
+            <button class="quick-button" data-action="prescription"><span>${icon('files')}</span><strong>처방전 재발급</strong><small>기존 처방 확인</small></button>
+            <button class="quick-button" data-health-tab="labs" data-page="health"><span>${icon('activity')}</span><strong>최근 검사 결과</strong><small>종합 혈액검사</small></button>
+            <button class="quick-button" data-health-tab="vaccines" data-page="health"><span>${icon('syringe')}</span><strong>예방접종 기록</strong><small>접종 일정 확인</small></button>
+            <button class="quick-button" data-page="team"><span>${icon('doctor')}</span><strong>전담 주치의 상담</strong><small>케어팀 연결</small></button>
           </div>
         </article>
         <article class="card card-pad">
@@ -178,7 +180,17 @@ function teamPage() {
 function healthPage() {
   const tabLabels = { overview: '요약', labs: '검사 결과', visits: '진료·시술', vaccines: '예방접종' };
   let content = '';
-  if (state.healthTab === 'overview') content = `<div class="health-dashboard"><div class="metric-grid"><article class="metric-card"><div><span>최근 혈압</span><strong>128 <small>/ 78</small></strong><p>mmHg · 정상 범위</p></div><span class="metric-trend good">${icon('trend')} 안정</span><svg viewBox="0 0 160 42" class="sparkline"><path d="M3 28 C18 15,28 30,42 21 S65 12,78 22 S101 31,116 18 S139 14,157 10"/></svg></article><article class="metric-card"><div><span>공복 혈당</span><strong>92</strong><p>mg/dL · 정상 범위</p></div><span class="metric-trend good">${icon('check')} 정상</span><svg viewBox="0 0 160 42" class="sparkline mint"><path d="M3 24 C18 20,28 28,42 23 S66 18,79 22 S105 17,119 21 S141 24,157 19"/></svg></article><article class="metric-card"><div><span>오늘 걸음 수</span><strong>4,821</strong><p>목표 6,000보의 80%</p></div><span class="metric-trend">${icon('activity')} 진행 중</span><div class="goal-bar"><i style="width:80%"></i></div></article></div><article class="card card-pad"><div class="card-header"><h3>최근 검사 결과</h3><button class="text-link" data-health-tab="labs">전체 보기</button></div><div class="lab-row"><span class="item-icon green">${icon('flask')}</span><div><strong>2026년 정기 혈액검사</strong><p>2026년 9월 15일 · 서울봄내과</p></div><span class="badge green">정상 8</span><span class="badge orange">확인 1</span><button class="icon-button">${icon('chevron')}</button></div><div class="lab-row"><span class="item-icon">${icon('heart')}</span><div><strong>심전도 검사</strong><p>2026년 8월 18일 · 서울봄내과</p></div><span class="badge green">정상</span><button class="icon-button">${icon('chevron')}</button></div></article><div class="health-two"><article class="card card-pad"><div class="card-header"><h3>현재 복용 중인 약</h3><span class="badge">2개</span></div><div class="med-row"><span class="item-icon">${icon('pill')}</span><div><strong>혈압약 2.5mg</strong><p>1일 1회 · 복용 시간 확인 필요</p></div><span class="badge orange">확인</span></div><div class="med-row"><span class="item-icon green">${icon('pill')}</span><div><strong>고지혈증약 10mg</strong><p>저녁 식후 · 1일 1회</p></div><span class="badge green">복용 중</span></div></article><article class="card card-pad"><div class="card-header"><h3>알레르기 및 주의사항</h3><span>${icon('alert')}</span></div><div class="allergy-card"><strong>페니실린계 항생제</strong><p>과거 발진 반응 · 처방 전 의료진 확인</p></div><div class="allergy-card neutral"><strong>낙상 주의</strong><p>야간 이동 시 보호자 동행 권장</p></div></article></div></div>`;
+  if (state.healthTab === 'overview') content = `<div class="health-dashboard">
+    <div class="metric-grid">
+      <article class="metric-card"><div><span>최근 혈압</span><strong>128 <small>/ 78</small></strong><p>mmHg · 정상 범위</p></div><span class="metric-trend good">${icon('trend')} 안정</span><svg viewBox="0 0 160 42" class="sparkline"><path d="M3 28 C18 15,28 30,42 21 S65 12,78 22 S101 31,116 18 S139 14,157 10"/></svg></article>
+      <article class="metric-card"><div><span>공복 혈당</span><strong>92</strong><p>mg/dL · 정상 범위</p></div><span class="metric-trend good">${icon('check')} 정상</span><svg viewBox="0 0 160 42" class="sparkline mint"><path d="M3 24 C18 20,28 28,42 23 S66 18,79 22 S105 17,119 21 S141 24,157 19"/></svg></article>
+      <article class="metric-card"><div><span>오늘 걸음 수</span><strong>4,821</strong><p>목표 6,000보의 80%</p></div><span class="metric-trend">${icon('activity')} 진행 중</span><div class="goal-bar"><i style="width:80%"></i></div></article>
+    </div>
+    <article class="card card-pad medication-panel"><div class="card-header"><div><h3>복약 관리</h3><p>처방전 기준 · 오늘 2건</p></div><button class="text-link" data-action="prescription">처방 내역</button></div><div class="med-progress"><span>오늘 복약 진행률</span><strong>1 / 2 완료</strong><div><i style="width:50%"></i></div></div><div class="medication-list"><div class="medication-item"><span class="item-icon">${icon('pill')}</span><div><div><strong>혈압약 2.5mg</strong><span class="badge orange">확인 필요</span></div><p>저녁 식후 · 1일 1회 · 오후 8:00</p><small>진료 녹음과 처방전의 복용 시간이 달라요</small></div><button class="med-check" data-action="med-check" aria-label="혈압약 복용 완료">${icon('check')}</button></div><div class="medication-item done"><span class="item-icon green">${icon('pill')}</span><div><div><strong>고지혈증약 10mg</strong><span class="badge green">복용 완료</span></div><p>저녁 식후 · 1일 1회</p><small>오늘 오후 7:40 복용 기록</small></div><button class="med-check checked" aria-label="고지혈증약 복용 완료">${icon('check')}</button></div></div></article>
+    <article class="card card-pad"><div class="card-header"><h3>최근 검사 결과</h3><button class="text-link" data-health-tab="labs">전체 보기</button></div><div class="lab-row"><span class="item-icon green">${icon('flask')}</span><div><strong>2026년 정기 혈액검사</strong><p>2026년 9월 15일 · 서울봄내과</p></div><span class="badge green">정상 8</span><span class="badge orange">확인 1</span><button class="icon-button">${icon('chevron')}</button></div><div class="lab-row"><span class="item-icon">${icon('heart')}</span><div><strong>심전도 검사</strong><p>2026년 8월 18일 · 서울봄내과</p></div><span class="badge green">정상</span><button class="icon-button">${icon('chevron')}</button></div></article>
+    <div class="health-two"><article class="card card-pad vaccine-panel"><div class="card-header"><div><h3>예방접종 및 정기 검진</h3><p>앞으로의 일정</p></div><button class="text-link" data-health-tab="vaccines">기록 보기</button></div><div class="vaccine-timeline"><div class="complete"><i>${icon('check')}</i><div><span class="badge green">접종 완료</span><strong>독감 예방접종</strong><p>2025년 10월 14일</p></div></div><div><i>${icon('syringe')}</i><div><span class="badge">예정</span><strong>대상포진 2차 접종</strong><p>2026년 10월 권장</p></div></div><div><i>${icon('calendar')}</i><div><span class="badge orange">검진 예정</span><strong>국가건강검진</strong><p>2026년 12월까지</p></div></div></div></article><article class="card card-pad"><div class="card-header"><h3>알레르기 및 주의사항</h3><span>${icon('alert')}</span></div><div class="allergy-card"><strong>페니실린계 항생제</strong><p>과거 발진 반응 · 처방 전 의료진 확인</p></div><div class="allergy-card neutral"><strong>낙상 주의</strong><p>야간 이동 시 보호자 동행 권장</p></div><button class="text-link allergy-link" data-action="allergy">긴급 정보 전체 보기</button></article></div>
+    <article class="card data-export-card"><span class="export-icon">${icon('files')}</span><div><h3>의료 데이터 내보내기 & 전송</h3><p>안전하게 암호화된 PDF로 기록을 내려받거나 병원에 전달할 수 있어요.</p><div><button class="button ghost" data-action="export">${icon('files')} 기록 PDF 다운로드</button><button class="button secondary" data-action="hospital-share">${icon('send')} 병원 전송 준비</button></div></div><span class="secure-note">${icon('shield')} 암호화 보호</span></article>
+  </div>`;
   if (state.healthTab === 'labs') content = `<div class="health-list">${[['혈액검사 종합 결과','9월 15일','총 콜레스테롤 178 · 공복 혈당 92','정상','green'],['당화혈색소 검사','8월 18일','HbA1c 5.8% · 경계 범위','추적 관찰','orange'],['신장 기능 검사','7월 21일','eGFR 84 · 크레아티닌 정상','정상','green']].map(v=>`<article class="card record-summary"><span class="item-icon ${v[4]}">${icon('flask')}</span><div><strong>${v[0]}</strong><p>2026년 ${v[1]} · ${v[2]}</p></div><span class="badge ${v[4]}">${v[3]}</span><button class="icon-button" data-action="notice">${icon('chevron')}</button></article>`).join('')}</div>`;
   if (state.healthTab === 'visits') content = `<div class="health-list"><article class="card record-summary"><span class="item-icon">${icon('doctor')}</span><div><strong>서울봄내과 정기 진료</strong><p>2026년 9월 15일 · 처방 용량 변경</p></div><span class="badge">진료</span><button class="icon-button" data-page="detail">${icon('chevron')}</button></article><article class="card record-summary"><span class="item-icon orange">${icon('heart')}</span><div><strong>백내장 수술</strong><p>2024년 5월 12일 · 새빛안과</p></div><span class="badge green">회복 완료</span><button class="icon-button" data-action="notice">${icon('chevron')}</button></article><article class="card record-summary"><span class="item-icon green">${icon('activity')}</span><div><strong>국가건강검진</strong><p>2024년 2월 8일 · 한국건강관리협회</p></div><span class="badge green">완료</span><button class="icon-button" data-action="notice">${icon('chevron')}</button></article></div>`;
   if (state.healthTab === 'vaccines') content = `<div class="health-list"><article class="card record-summary"><span class="item-icon green">${icon('syringe')}</span><div><strong>인플루엔자 예방접종</strong><p>2025년 10월 14일 · 다음 접종 2026년 10월 권장</p></div><span class="badge green">접종 완료</span></article><article class="card record-summary"><span class="item-icon">${icon('syringe')}</span><div><strong>코로나19 추가 접종</strong><p>2025년 11월 3일 · 화이자</p></div><span class="badge green">접종 완료</span></article><article class="card record-summary"><span class="item-icon orange">${icon('syringe')}</span><div><strong>대상포진 예방접종</strong><p>1차 접종 완료 · 2차 접종 일정 확인</p></div><span class="badge orange">예정</span></article></div>`;
@@ -294,7 +306,7 @@ function sendQuestion(question) {
 
 document.addEventListener('click', (event) => {
   const pageTarget = event.target.closest('[data-page]');
-  if (pageTarget) { event.preventDefault(); navigate(pageTarget.dataset.page); return; }
+  if (pageTarget) { event.preventDefault(); if (pageTarget.dataset.healthTab) state.healthTab = pageTarget.dataset.healthTab; navigate(pageTarget.dataset.page); return; }
   const taskButton = event.target.closest('[data-task]');
   if (taskButton) { const task = state.tasks.find(t => t.id === Number(taskButton.dataset.task)); task.done = !task.done; render(); showToast(task.done ? '챙길 일을 완료했어요.' : '미완료로 되돌렸어요.'); return; }
   const question = event.target.closest('[data-question]');
@@ -321,6 +333,12 @@ document.addEventListener('click', (event) => {
     case 'transcript': showToast('“다음 달 13일에 혈액검사 한번 해볼게요.”'); break;
     case 'urgent-call': showToast('가장 빠른 원격 상담을 확인하고 있어요.'); break;
     case 'book': showToast(`${action.dataset.doctor} 예약 시간을 선택했어요.`); break;
+    case 'prescription': showToast('최근 처방전과 재발급 가능한 내역을 확인했어요.'); break;
+    case 'briefing': showToast('이번 주 건강 브리핑을 열었어요.'); break;
+    case 'med-check': action.classList.add('checked'); action.closest('.medication-item').classList.add('done'); showToast('복약 완료로 기록했어요.'); break;
+    case 'allergy': showToast('의료진에게 보여줄 긴급 정보를 준비했어요.'); break;
+    case 'export': showToast('건강 기록 PDF를 준비했어요.'); break;
+    case 'hospital-share': showToast('전송할 기록과 병원을 선택해주세요.'); break;
     default: showToast('이 기능은 프로토타입에서 확인 중이에요.');
   }
 });
