@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6757e8">
+  <meta name="description" content="가족과 함께 진료 기록, 복약 일정, 다음 방문을 챙기는 금명이 케어 서비스">
+  <title>금명이 · 가족 건강 케어</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%236757e8'/%3E%3Cpath d='M19 34c9 1 17-5 19-16 7 8 8 20-1 27-7 6-17 2-18-11Z' fill='white'/%3E%3Cpath d='M25 42c4-8 9-13 17-18' fill='none' stroke='%236757e8' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="데스크톱 주 메뉴">
+      <a class="brand" href="#home" data-page="home" aria-label="금명이 홈">
+        <span class="brand-mark" aria-hidden="true">금</span>
+        <span><strong>금명이</strong><small>가족 건강 케어</small></span>
+      </a>
+      <div class="care-person">
+        <span class="avatar">김</span>
+        <span><small>돌봄 대상</small><strong>김금명 님</strong></span>
+        <button class="icon-button" data-action="person" aria-label="돌봄 대상 변경">⌄</button>
+      </div>
+      <nav class="side-nav" aria-label="주 메뉴"></nav>
+      <div class="sidebar-bottom">
+        <button class="parent-mode" data-page="parent"><span class="parent-icon">◉</span><span><strong>부모님 화면</strong><small>간편 진료 기록 모드</small></span></button>
+        <p>진료 정보는 가족의 동의 범위 안에서만 공유돼요.</p>
+      </div>
+    </aside>
+
+    <div class="app-column">
+      <header class="mobile-header">
+        <a class="brand compact" href="#home" data-page="home"><span class="brand-mark">금</span><strong>금명이</strong></a>
+        <div class="header-actions">
+          <button class="icon-button" data-page="agent" aria-label="금명이에게 묻기" data-icon="sparkles"></button>
+          <button class="avatar small" data-page="family" aria-label="내 정보">김</button>
+        </div>
+      </header>
+      <header class="desktop-header">
+        <div><p id="section-kicker">금명이 홈</p><h1 id="section-title">오늘의 케어</h1></div>
+        <div class="header-actions">
+          <button class="search-button" data-page="agent"><span data-icon="search"></span> 진료 기록에 질문하기</button>
+          <button class="icon-button notify" aria-label="알림"><span data-icon="bell"></span><i></i></button>
+        </div>
+      </header>
+
+      <main id="app-main" tabindex="-1"></main>
+
+      <nav class="bottom-nav" aria-label="모바일 주 메뉴"></nav>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
