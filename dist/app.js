@@ -19,16 +19,29 @@ const icons = {
   shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/>',
   trend: '<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
   chevron: '<path d="m9 18 6-6-6-6"/>',
-  alert: '<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>'
+  alert: '<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>',
+  video: '<path d="m16 10 5-3v10l-5-3z"/><rect x="3" y="5" width="13" height="14" rx="2"/>',
+  message: '<path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>',
+  activity: '<path d="M3 12h4l2-7 4 14 2-7h6"/>',
+  syringe: '<path d="m18 2 4 4M17 7l3-3M19 9 2-2M7.5 19.5 4 23M9 18l-3-3 9-9 3 3z"/>',
+  flask: '<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3M8 15h8"/>',
+  doctor: '<circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0 1 14 0v2M9 14v3l3 2 3-2v-3"/>',
+  paperclip: '<path d="m21 11-8.5 8.5a6 6 0 0 1-8.5-8.5L13 2a4 4 0 0 1 5.7 5.7l-9 9a2 2 0 0 1-2.8-2.8l8.3-8.3"/>'
 };
 
 const icon = (name) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name] || icons.sparkles}</svg>`;
-const navItems = [
+const mobileNavItems = [
   { id: 'home', label: '홈', icon: 'home' },
-  { id: 'records', label: '진료 기록', icon: 'files' },
+  { id: 'appointments', label: '진료 예약', icon: 'calendar' },
   { id: 'parent', label: '진료 녹음', icon: 'mic', featured: true },
+  { id: 'team', label: '케어팀', icon: 'message', badge: '1' },
+  { id: 'health', label: '건강 기록', icon: 'activity' }
+];
+const sideNavItems = [
+  ...mobileNavItems,
+  { id: 'records', label: '진료 기록', icon: 'files' },
   { id: 'tasks', label: '챙길 일', icon: 'check', badge: '2' },
-  { id: 'family', label: '가족', icon: 'users' }
+  { id: 'family', label: '가족 연결', icon: 'users' }
 ];
 
 const state = {
@@ -40,7 +53,11 @@ const state = {
     { id: 3, title: '다음 진료 질문 정리', meta: '10월 13일 전까지', icon: 'files', tone: 'orange', done: false }
   ],
   recording: false,
-  messages: []
+  messages: [],
+  teamMessages: [],
+  appointmentDay: 24,
+  appointmentType: '내과',
+  healthTab: 'overview'
 };
 
 const main = document.querySelector('#app-main');
@@ -52,9 +69,9 @@ function bindStaticIcons() {
 
 function renderNav() {
   const current = ['detail', 'summary'].includes(state.page) ? 'records' : state.page;
-  const markup = navItems.map(item => `<button class="nav-button ${item.featured ? 'record-nav' : ''}" data-page="${item.id}" ${current === item.id ? 'aria-current="page"' : ''}>${icon(item.icon)}<span>${item.label}</span>${item.badge ? `<span class="nav-badge">${state.tasks.filter(t => !t.done).length}</span>` : ''}</button>`).join('');
-  document.querySelector('.side-nav').innerHTML = `${markup}<button class="nav-button" data-page="agent" ${current === 'agent' ? 'aria-current="page"' : ''}>${icon('sparkles')}<span>금명이에게 묻기</span></button>`;
-  document.querySelector('.bottom-nav').innerHTML = markup;
+  const makeNav = (item) => `<button class="nav-button ${item.featured ? 'record-nav' : ''}" data-page="${item.id}" ${current === item.id ? 'aria-current="page"' : ''}>${icon(item.icon)}<span>${item.label}</span>${item.badge ? `<span class="nav-badge">${item.id === 'team' ? 1 : state.tasks.filter(t => !t.done).length}</span>` : ''}</button>`;
+  document.querySelector('.side-nav').innerHTML = `${sideNavItems.map(makeNav).join('')}<button class="nav-button" data-page="agent" ${current === 'agent' ? 'aria-current="page"' : ''}>${icon('sparkles')}<span>금명이에게 묻기</span></button>`;
+  document.querySelector('.bottom-nav').innerHTML = mobileNavItems.map(makeNav).join('');
 }
 
 function taskItem(task) {
@@ -100,10 +117,10 @@ function homePage() {
         <article class="card card-pad">
           <div class="card-header"><h3>빠른 케어 메뉴</h3></div>
           <div class="quick-grid">
-            <button class="quick-button" data-page="parent"><span>${icon('mic')}</span><strong>진료 기록</strong></button>
-            <button class="quick-button" data-page="records"><span>${icon('calendar')}</span><strong>다음 일정</strong></button>
-            <button class="quick-button" data-page="agent"><span>${icon('sparkles')}</span><strong>기록에 질문</strong></button>
-            <button class="quick-button" data-page="family"><span>${icon('users')}</span><strong>가족 공유</strong></button>
+            <button class="quick-button" data-page="appointments"><span>${icon('calendar')}</span><strong>진료 예약</strong></button>
+            <button class="quick-button" data-page="parent"><span>${icon('mic')}</span><strong>진료 녹음</strong></button>
+            <button class="quick-button" data-page="team"><span>${icon('message')}</span><strong>케어팀 문의</strong></button>
+            <button class="quick-button" data-page="health"><span>${icon('activity')}</span><strong>건강 기록</strong></button>
           </div>
         </article>
         <article class="card card-pad">
@@ -121,6 +138,51 @@ function homePage() {
       </aside>
     </div>
   </section>`;
+}
+
+function appointmentsPage() {
+  const days = [
+    { day: 22, weekday: '화' }, { day: 23, weekday: '수' }, { day: 24, weekday: '목' },
+    { day: 25, weekday: '금' }, { day: 26, weekday: '토' }
+  ];
+  const doctors = [
+    { initial: '이', name: '이서진 전문의', dept: '내과 · 만성질환', detail: '진료 경력 12년 · 평점 4.9', time: '오늘 오후 4:15', badge: '가장 빠름' },
+    { initial: '박', name: '박현우 전문의', dept: '가정의학과', detail: '진료 경력 9년 · 평점 4.8', time: '내일 오전 10:00', badge: '원격 진료' },
+    { initial: '정', name: '정다은 전문의', dept: '내과 · 노년의학', detail: '진료 경력 15년 · 평점 4.9', time: '9월 24일 오후 2:30', badge: '주치의 추천' }
+  ];
+  return `<section class="page">
+    ${pageHeading('진료 예약 & 원격 케어', '필요한 진료를<br>바로 이어드릴게요', '증상에 맞는 의료진과 가능한 시간을 한 화면에서 선택하세요.')}
+    <article class="urgent-care"><div><span class="urgent-icon">${icon('video')}</span><div><span class="badge red">24시간 상담</span><h3>지금 의료 상담이 필요하신가요?</h3><p>대기 중인 의료진과 비대면으로 연결할 수 있어요.</p></div></div><button class="button primary" data-action="urgent-call">지금 상담 요청</button></article>
+    <div class="booking-grid">
+      <div class="stack">
+        <article class="card card-pad"><div class="card-header"><h3>진료 분야 선택</h3><span class="step-label">1 / 3</span></div><div class="choice-chips">${['내과','가정의학과','복약 상담','건강검진'].map(type => `<button class="choice-chip ${state.appointmentType === type ? 'selected' : ''}" data-appointment-type="${type}">${type === '내과' ? icon('doctor') : type === '복약 상담' ? icon('pill') : icon('heart')}<span>${type}</span></button>`).join('')}</div></article>
+        <article class="card card-pad"><div class="card-header"><h3>예약 날짜 선택</h3><span class="step-label">2 / 3</span></div><div class="date-strip">${days.map(d => `<button class="date-option ${state.appointmentDay === d.day ? 'selected' : ''}" data-appointment-day="${d.day}"><small>${d.weekday}</small><strong>${d.day}</strong><span>9월</span></button>`).join('')}</div><div class="availability"><i></i> 선택한 날짜에 예약 가능한 의료진 3명</div></article>
+        <article class="card card-pad"><div class="card-header"><h3>예약 가능 의료진</h3><span class="step-label">3 / 3</span></div><div class="doctor-list">${doctors.map((doctor, index) => `<div class="doctor-card"><span class="doctor-avatar">${doctor.initial}<i></i></span><div><div class="doctor-name"><strong>${doctor.name}</strong><span class="badge ${index === 0 ? 'green' : ''}">${doctor.badge}</span></div><p>${doctor.dept}</p><small>${doctor.detail}</small><div class="doctor-time">${icon('clock')} ${doctor.time} 예약 가능</div></div><button class="button ${index === 0 ? 'primary' : 'secondary'}" data-action="book" data-doctor="${doctor.name}">예약</button></div>`).join('')}</div></article>
+      </div>
+      <aside class="stack"><article class="card card-pad next-visit"><span class="eyebrow">다가오는 진료</span><h3>10월 13일 · 오전 10:30</h3><p>서울봄내과 · 혈액검사 예정</p><button class="button full" data-action="calendar">일정 자세히 보기</button></article><article class="card card-pad"><div class="card-header"><h3>원격 진료 준비</h3><span>${icon('video')}</span></div><div class="prep-list"><div><span>${icon('check')}</span><p><strong>복용 중인 약 확인</strong><small>최근 처방 정보가 연결되어 있어요</small></p></div><div><span>${icon('check')}</span><p><strong>진료 질문 준비</strong><small>저장된 질문 2개가 있어요</small></p></div><div><span class="pending">3</span><p><strong>카메라·마이크 확인</strong><small>진료 10분 전 확인해주세요</small></p></div></div></article></aside>
+    </div>
+  </section>`;
+}
+
+function teamPage() {
+  const extraMessages = state.teamMessages.map(m => `<div class="care-message user-message"><p>${m}</p><small>방금 · 전송됨</small></div>`).join('');
+  return `<section class="page">
+    ${pageHeading('전담 케어팀', '혼자 고민하지 않도록<br>케어팀이 함께할게요', '진료와 복약, 생활 관리에 대해 편하게 문의하세요.')}
+    <div class="care-chat-layout">
+      <aside class="card care-roster"><div class="card-pad"><div class="card-header"><h3>나의 케어팀</h3><span class="badge green">응답 가능</span></div><div class="team-member active"><span class="doctor-avatar purple">간<i></i></span><div><strong>김하늘 간호사</strong><p>케어 코디네이터</p></div><span>지금</span></div><div class="team-member"><span class="doctor-avatar">이</span><div><strong>이서진 전문의</strong><p>내과 주치의</p></div><span>1시간 전</span></div><div class="team-member"><span class="doctor-avatar mint">약</span><div><strong>최유리 약사</strong><p>복약 상담</p></div><span>어제</span></div></div><div class="care-hours"><span>${icon('clock')}</span><div><strong>케어팀 운영 시간</strong><p>평일 오전 9시 – 오후 6시<br>긴급 상황은 119에 연락해주세요.</p></div></div></aside>
+      <article class="card care-thread"><header><div class="team-avatars"><span>간</span><span>이</span><span>약</span></div><div><strong>김금명 님 전담 케어팀</strong><p><i></i> 평균 10분 이내 답변</p></div><button class="icon-button" aria-label="케어팀 정보">${icon('users')}</button></header><div class="thread-day">오늘</div><div class="thread-body"><div class="care-message team-message"><div class="message-author"><span class="doctor-avatar purple">간</span><strong>김하늘 간호사</strong></div><p>안녕하세요, 수진님. 어머님의 최근 혈압 기록 잘 확인했어요. 지난주보다 안정적으로 유지되고 있습니다.</p><small>오전 9:42</small></div><div class="care-message user-message"><p>다행이네요. 저녁 혈압약은 오늘도 같은 시간에 드리면 될까요?</p><small>오전 9:48</small></div><div class="care-message team-message"><div class="message-author"><span class="doctor-avatar mint">약</span><strong>최유리 약사</strong></div><p>네, 오늘은 기존 시간대로 복용해주세요. 다만 진료 녹음과 처방전의 복용 시간이 달라서 다음 방문 전 병원에 확인해두겠습니다.</p><div class="care-note">${icon('pill')} <span><strong>케어팀 메모</strong> 복용 시간 확인 요청 등록</span></div><small>오전 9:55</small></div>${extraMessages}</div><div class="quick-replies">${['다음 방문 준비','복약 시간 문의','혈압 기록 확인'].map(q=>`<button data-team-question="${q}">${q}</button>`).join('')}</div><form class="team-compose" id="team-form"><button type="button" class="icon-button" aria-label="파일 첨부">${icon('paperclip')}</button><input id="team-input" aria-label="케어팀에게 메시지" placeholder="케어팀에게 메시지를 보내세요" autocomplete="off"><button class="send-button" aria-label="메시지 보내기">${icon('send')}</button></form></article>
+    </div>
+  </section>`;
+}
+
+function healthPage() {
+  const tabLabels = { overview: '요약', labs: '검사 결과', visits: '진료·시술', vaccines: '예방접종' };
+  let content = '';
+  if (state.healthTab === 'overview') content = `<div class="health-dashboard"><div class="metric-grid"><article class="metric-card"><div><span>최근 혈압</span><strong>128 <small>/ 78</small></strong><p>mmHg · 정상 범위</p></div><span class="metric-trend good">${icon('trend')} 안정</span><svg viewBox="0 0 160 42" class="sparkline"><path d="M3 28 C18 15,28 30,42 21 S65 12,78 22 S101 31,116 18 S139 14,157 10"/></svg></article><article class="metric-card"><div><span>공복 혈당</span><strong>92</strong><p>mg/dL · 정상 범위</p></div><span class="metric-trend good">${icon('check')} 정상</span><svg viewBox="0 0 160 42" class="sparkline mint"><path d="M3 24 C18 20,28 28,42 23 S66 18,79 22 S105 17,119 21 S141 24,157 19"/></svg></article><article class="metric-card"><div><span>오늘 걸음 수</span><strong>4,821</strong><p>목표 6,000보의 80%</p></div><span class="metric-trend">${icon('activity')} 진행 중</span><div class="goal-bar"><i style="width:80%"></i></div></article></div><article class="card card-pad"><div class="card-header"><h3>최근 검사 결과</h3><button class="text-link" data-health-tab="labs">전체 보기</button></div><div class="lab-row"><span class="item-icon green">${icon('flask')}</span><div><strong>2026년 정기 혈액검사</strong><p>2026년 9월 15일 · 서울봄내과</p></div><span class="badge green">정상 8</span><span class="badge orange">확인 1</span><button class="icon-button">${icon('chevron')}</button></div><div class="lab-row"><span class="item-icon">${icon('heart')}</span><div><strong>심전도 검사</strong><p>2026년 8월 18일 · 서울봄내과</p></div><span class="badge green">정상</span><button class="icon-button">${icon('chevron')}</button></div></article><div class="health-two"><article class="card card-pad"><div class="card-header"><h3>현재 복용 중인 약</h3><span class="badge">2개</span></div><div class="med-row"><span class="item-icon">${icon('pill')}</span><div><strong>혈압약 2.5mg</strong><p>1일 1회 · 복용 시간 확인 필요</p></div><span class="badge orange">확인</span></div><div class="med-row"><span class="item-icon green">${icon('pill')}</span><div><strong>고지혈증약 10mg</strong><p>저녁 식후 · 1일 1회</p></div><span class="badge green">복용 중</span></div></article><article class="card card-pad"><div class="card-header"><h3>알레르기 및 주의사항</h3><span>${icon('alert')}</span></div><div class="allergy-card"><strong>페니실린계 항생제</strong><p>과거 발진 반응 · 처방 전 의료진 확인</p></div><div class="allergy-card neutral"><strong>낙상 주의</strong><p>야간 이동 시 보호자 동행 권장</p></div></article></div></div>`;
+  if (state.healthTab === 'labs') content = `<div class="health-list">${[['혈액검사 종합 결과','9월 15일','총 콜레스테롤 178 · 공복 혈당 92','정상','green'],['당화혈색소 검사','8월 18일','HbA1c 5.8% · 경계 범위','추적 관찰','orange'],['신장 기능 검사','7월 21일','eGFR 84 · 크레아티닌 정상','정상','green']].map(v=>`<article class="card record-summary"><span class="item-icon ${v[4]}">${icon('flask')}</span><div><strong>${v[0]}</strong><p>2026년 ${v[1]} · ${v[2]}</p></div><span class="badge ${v[4]}">${v[3]}</span><button class="icon-button" data-action="notice">${icon('chevron')}</button></article>`).join('')}</div>`;
+  if (state.healthTab === 'visits') content = `<div class="health-list"><article class="card record-summary"><span class="item-icon">${icon('doctor')}</span><div><strong>서울봄내과 정기 진료</strong><p>2026년 9월 15일 · 처방 용량 변경</p></div><span class="badge">진료</span><button class="icon-button" data-page="detail">${icon('chevron')}</button></article><article class="card record-summary"><span class="item-icon orange">${icon('heart')}</span><div><strong>백내장 수술</strong><p>2024년 5월 12일 · 새빛안과</p></div><span class="badge green">회복 완료</span><button class="icon-button" data-action="notice">${icon('chevron')}</button></article><article class="card record-summary"><span class="item-icon green">${icon('activity')}</span><div><strong>국가건강검진</strong><p>2024년 2월 8일 · 한국건강관리협회</p></div><span class="badge green">완료</span><button class="icon-button" data-action="notice">${icon('chevron')}</button></article></div>`;
+  if (state.healthTab === 'vaccines') content = `<div class="health-list"><article class="card record-summary"><span class="item-icon green">${icon('syringe')}</span><div><strong>인플루엔자 예방접종</strong><p>2025년 10월 14일 · 다음 접종 2026년 10월 권장</p></div><span class="badge green">접종 완료</span></article><article class="card record-summary"><span class="item-icon">${icon('syringe')}</span><div><strong>코로나19 추가 접종</strong><p>2025년 11월 3일 · 화이자</p></div><span class="badge green">접종 완료</span></article><article class="card record-summary"><span class="item-icon orange">${icon('syringe')}</span><div><strong>대상포진 예방접종</strong><p>1차 접종 완료 · 2차 접종 일정 확인</p></div><span class="badge orange">예정</span></article></div>`;
+  return `<section class="page">${pageHeading('건강 기록', '나의 건강 변화를<br>한눈에 확인해요', '검사 결과와 진료 이력, 복약 정보를 필요한 순간에 찾아보세요.')}<div class="health-tabs" role="tablist">${Object.entries(tabLabels).map(([id,label])=>`<button role="tab" aria-selected="${state.healthTab===id}" data-health-tab="${id}">${label}</button>`).join('')}</div>${content}</section>`;
 }
 
 function recordsPage() {
@@ -188,8 +250,8 @@ function parentPage() {
   return `<section class="page parent-page"><article class="card parent-panel"><span class="badge">김금명 님의 금명이</span><button class="record-orb ${state.recording ? 'recording' : ''}" data-action="record" aria-label="${state.recording ? '진료 녹음 마치기' : '진료 녹음 시작'}">${icon(state.recording ? 'square' : 'mic')}</button><h2>${state.recording ? '진료 내용을<br>듣고 있어요' : '진료 내용을<br>함께 기억할게요'}</h2><p>${state.recording ? '편하게 진료받으세요.<br>끝나면 아래 버튼을 눌러주세요.' : '진료 전에 녹음해도 되는지<br>의료진에게 먼저 알려주세요.'}</p><button class="button primary full" data-action="record">${state.recording ? '진료 녹음 마치기' : '진료 녹음 시작'}</button><button class="text-link" style="margin-top:18px" data-page="home">보호자 화면으로 돌아가기</button></article></section>`;
 }
 
-const pages = { home: homePage, records: recordsPage, tasks: tasksPage, family: familyPage, detail: detailPage, agent: agentPage, parent: parentPage };
-const pageTitles = { home: ['금명이 홈','오늘의 케어'], records: ['진료 기록','건강 기록'], tasks: ['함께 챙기기','챙길 일'], family: ['연결 관리','가족'], detail: ['진료 기록','진료 요약'], agent: ['기록 기반 안내','금명이에게 묻기'], parent: ['간편 모드','부모님 화면'] };
+const pages = { home: homePage, appointments: appointmentsPage, team: teamPage, health: healthPage, records: recordsPage, tasks: tasksPage, family: familyPage, detail: detailPage, agent: agentPage, parent: parentPage };
+const pageTitles = { home: ['금명이 홈','오늘의 케어'], appointments: ['진료 연결','진료 예약'], team: ['전담 지원','케어팀'], health: ['통합 기록','건강 기록'], records: ['진료 기록','방문 기록'], tasks: ['함께 챙기기','챙길 일'], family: ['연결 관리','가족'], detail: ['진료 기록','진료 요약'], agent: ['기록 기반 안내','금명이에게 묻기'], parent: ['간편 모드','부모님 화면'] };
 
 function render({ focus = false } = {}) {
   if (!pages[state.page]) state.page = 'home';
@@ -237,6 +299,14 @@ document.addEventListener('click', (event) => {
   if (taskButton) { const task = state.tasks.find(t => t.id === Number(taskButton.dataset.task)); task.done = !task.done; render(); showToast(task.done ? '챙길 일을 완료했어요.' : '미완료로 되돌렸어요.'); return; }
   const question = event.target.closest('[data-question]');
   if (question) { sendQuestion(question.dataset.question); return; }
+  const appointmentType = event.target.closest('[data-appointment-type]');
+  if (appointmentType) { state.appointmentType = appointmentType.dataset.appointmentType; render(); return; }
+  const appointmentDay = event.target.closest('[data-appointment-day]');
+  if (appointmentDay) { state.appointmentDay = Number(appointmentDay.dataset.appointmentDay); render(); return; }
+  const healthTab = event.target.closest('[data-health-tab]');
+  if (healthTab) { state.healthTab = healthTab.dataset.healthTab; render(); return; }
+  const teamQuestion = event.target.closest('[data-team-question]');
+  if (teamQuestion) { document.querySelector('#team-input').value = teamQuestion.dataset.teamQuestion; document.querySelector('#team-input').focus(); return; }
   const action = event.target.closest('[data-action]');
   if (!action) return;
   switch (action.dataset.action) {
@@ -249,11 +319,20 @@ document.addEventListener('click', (event) => {
     case 'share': showToast('가족에게 진료 요약을 다시 공유했어요.'); break;
     case 'evidence': showToast('처방전: 혈압약 2.5mg · 1일 1회'); break;
     case 'transcript': showToast('“다음 달 13일에 혈액검사 한번 해볼게요.”'); break;
+    case 'urgent-call': showToast('가장 빠른 원격 상담을 확인하고 있어요.'); break;
+    case 'book': showToast(`${action.dataset.doctor} 예약 시간을 선택했어요.`); break;
     default: showToast('이 기능은 프로토타입에서 확인 중이에요.');
   }
 });
 
 document.addEventListener('submit', (event) => {
+  if (event.target.id === 'team-form') {
+    event.preventDefault();
+    const input = document.querySelector('#team-input');
+    const value = input.value.trim();
+    if (value) { state.teamMessages.push(value); render(); showToast('케어팀에 메시지를 보냈어요.'); }
+    return;
+  }
   if (event.target.id !== 'chat-form') return;
   event.preventDefault();
   const input = document.querySelector('#chat-input');
